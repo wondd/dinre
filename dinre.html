@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chat Story Andre & Dinda</title>
+
+<style>
+body{
+    margin:0;
+    font-family:Arial;
+    background:#0b141a;
+    color:white;
+}
+
+/* background animasi */
+.bg{
+    position:fixed;
+    inset:0;
+    background:linear-gradient(120deg,#0b141a,#111b21,#0b141a);
+    background-size:200% 200%;
+    animation:moveBg 8s ease infinite;
+    z-index:-1;
+}
+
+@keyframes moveBg{
+    0%{background-position:0% 50%;}
+    50%{background-position:100% 50%;}
+    100%{background-position:0% 50%;}
+}
+
+/* chat */
+.chat{
+    max-width:500px;
+    margin:auto;
+    padding:15px;
+    height:100vh;
+    overflow-y:auto;
+    scroll-behavior:smooth;
+    box-sizing:border-box;
+}
+
+/* narration */
+.narration{
+    text-align:center;
+    margin:14px 0;
+    font-size:12px;
+    opacity:.7;
+}
+
+/* message */
+.msg{
+    display:flex;
+    flex-direction:column;
+    margin:10px 0;
+}
+.name{
+    font-size:12px;
+    color:#8696a0;
+    margin:0 0 4px 0;
+}
+
+.right .name{
+    align-self:flex-end;
+    text-align:right;
+}
+.left .name{
+    align-self:flex-start;
+    text-align:left;
+}
+.left{
+    align-items:flex-start;
+}
+.right{
+    align-items:flex-end;
+}
+
+.bubble{
+    display:block;
+    width:fit-content;
+    max-width:75%;
+    padding:10px 13px;
+    border-radius:12px;
+    font-size:14px;
+    line-height:1.4;
+    word-break:break-word;
+    white-space:pre-wrap;
+}
+.right .bubble{
+    background:#005c4b;
+    border-top-right-radius:4px;
+}
+.left .bubble{
+    background:#202c33;
+    border-top-left-radius:4px;
+}
+
+/* kursor ketik */
+.cursor{
+    border-right:2px solid white;
+    animation:blink .6s infinite;
+}
+@keyframes blink{
+    50%{border-color:transparent;}
+}
+
+/* lapisan ketuk */
+.tap-layer{
+    position:fixed;
+    inset:0;
+    z-index:10;
+}
+
+audio{display:none;}
+</style>
+</head>
+<body>
+
+<div class="bg"></div>
+<div class="chat" id="chat"></div>
+<div class="tap-layer" id="tap"></div>
+
+<audio id="bgm" loop>
+  <source src="lagu.mp3" type="audio/mp3">
+
+
+<script>
+const data = [
+    {type:"narration", text:"suatu hari yang membuat dinda kebingungan"},
+    {type:"chat", name:"Andre", side:"right", text:"assalamualaikum dinda aku dari masa lalu"},
+    {type:"chat", name:"Andre", side:"right", text:"gimana kabar mu sekarang?"},
+    {type:"chat", name:"Andre", side:"right", text:"seru ya kamu ketawa sama orang lain"},
+    {type:"chat", name:"Dinda", side:"left", text:"hah apa, jangan ngaco kamu dre"},
+    {type:"chat", name:"Dinda", side:"left", text:"btw gimana kabar kamu?"},
+    {type:"chat", name:"Dinda", side:"left", text:"baik, emang kenapa ya? kok tiba tiba ngomong gini?"},
+    {type:"narration", text:"pesan dinda merasa di abaikam"},
+    {type:"chat", name:"Andre", side:"right", text:"apakah kamu masih bersama andre?"},
+    {type:"chat", name:"Dinda", side:"left", text:"masih kenapa? kan kamu andre kan?"},
+    {type:"chat", name:"Andre", side:"right", text:"okey, dengerin ya kata kata ku ini ya dinda"},
+    {type:"chat", name:"Dinda", side:"left", text:"dengerin apa?"},
+    {type:"narration", text:"dinda pun menunggu apa yang akan di ketik oleh andre"},
+    {type:"chat", name:"Andre", side:"right", text:"lu sayang aku kan?"},
+    {type:"chat", name:"Dinda", side:"left", text:"ya aku sayang bengat sama kamu"},
+    {type:"chat", name:"Andre", side:"right", text:"kalo sayang coba buktiin ya"},
+    {type:"chat", name:"Dinda", side:"left", text:"iya akan ku buktikan"},
+    {type:"chat", name:"Andre", side:"right", text:"tolong baca ini ya, kalo kamu sayang?"},
+    {type:"chat", name:"Dinda", side:"left", text:"iya andre ku, apa coba?"},
+    {type:"chat", name:"Andre", side:"right", text:"ku mulai ya ?"},
+    {type:"chat", name:"Dinda", side:"left", text:"iya andre bakal ku baca kok, emang apa sih?"},
+    {type:"chat", name:"Andre", side:"right", text:"oke deh ku mulai"},
+    {type:"chat", name:"Andre", side:"right", text:"sayang kalo kamu beneran sayang sama aku, bisa gak si kamu ngasih aku rasa sayang yang ke aku ? aku cuma pingin kamu di samping ku terus lho din, aku gak tau lo selama ini lu ngapain aja, kek nya kamu asik banget ya sama orang lain? kek nya kamu bisa ketawa mareka ya. tetapi aku gak tau lu beneran sayang ga si sama aku? kamu kek ngelukain aku kayak gini seolah olah kamu sayang banget sama aku tapi di lain sisi kamu nyakitin aku lho tanpa kamu ketahui ,lu gituin, di 2in gitu, kalo emang niat mu mo chat, ngomong aja ntar aku yang mundur din. oke lah aku banyak salah sama kamu. tapi salah ku ini apasi din? kalo emang lu syang aku, coba buktikan dong jangan omong doang, lu sayang tapi masi sama yang lain, lu sayang tapi kok tlp ma orang? kamu gak bisa benerin masalah kita ya? aku aja berusaha tetapi kamu kok malah milih sama orang lain? lu mau aku hilang kah? maaf deh din kalo emang aku banyak salah, tapi ya jangan sakiti diri ku dong, kasiahan ini, kau buat hati ku lemah berhari hari"},
+    {type:"chat", name:"Dinda", side:"left", text:"gak gitu lho sayang"},
+    {type:"chat", name:"Andre", side:"right", text:"aku belum selesai ngetik"},
+    {type:"chat", name:"Dinda", side:"left", text:"okey ku tunggu, apa yang mau kamu ungkapin"},
+    {type:"narration", text:"andre pun mulai ungkapin perasaan yang sering di pendem selama ini"},
+    {type:"chat", name:"Andre", side:"right", text:"okey makasih"},
+    {type:"chat", name:"Andre", side:"right", text:"hay din, aku kecewa sama diri ku sendiri. aku gak bisa jadi cowo yang sempurna buat kamu. di lain sisi aku juga kecewa sama kamu, kok bisa si kamu sama orang lain? iya deh aku emang gak bisa tapi itu demi hati ku yang selalu menyayangi mu, hmm. gausa deh mulai dari awal. din nih gw kasih tau apa yang sering ku rasakan akhir akhir ini.sakit di pikiran dada ku sesek, pikiran kemana mana. ovt terus lu gak tau rasa nya jadi aku. aku selalu Nerima kamu tapi kau nya malah milih yang lain. aku jahat. maaf deh, kalo emang kamu pingin bilang dari hidup mu bilang aja, bakal ku tunggu. aku gak tau ketikan ini sia sia tida. moga aja kgk ya , aku mau kamu tidak hilang dari hidup ku. tapi kah sendiri yang membikin ku agar bosen sama kamu. agar aku bisa ninggalin kamu. di lain sisi hati ku lelah din. nyari kebahagiaan samaa musik.ga sama orang lain din. kamu nanya, kamu selama ini pingin apa dre? pingin ke inginan ku terkabulkan semua.'' emang apa aja itu andre kalo boleh tau? '' aku cuma mau kamu peduli sama aku. gausa ada orang ketiga. aku cape din kamu gituin terus, bantu aku ngertiin perasaan yang tersakiti ini dong . tiap hari aku mikirin kamu lho , dan ada suatu saat aku mati rasa, tetapi rasa itu muncul kembali di saat aku ketemu sama diri mu, aku sering nahan nangis lho. hey syaang aku salah apasih sampe membuat kamu sama orang lain? itu nama nya selingkuh bukan? berarti lu mau aku ninggali. kamu dong Tanpa ada salah , seolah olah aku yang salah kan. apasih yang kamu mau din.jangan sakiti hati ku ini dong din. kalo emang lu mau sama orang . langsung aja ngomong dong. kamu cuma bisa minta maaf doang . coba deh sayang mikirrr hati ku ini, sayang banget lho sama kamu . gini amat jadi cowo gampang di manfaatin, gampang bet di tholol lin. ngertiin dong"},
+    {type:"chat", name:"Dinda", side:"left", text:"maaf ya sayang"},
+    {type:"chat", name:"Dinda", side:"left", text:"kalo aku salah maafin ya."},
+    {type:"chat", name:"Dinda", side:"left", text:"aku gak gitu kok"},
+    {type:"chat", name:"Dinda", side:"left", text:"aku masih sayang kamu"},
+    {type:"chat", name:"Andre", side:"right", text:"kalo sayang kenapa masih sama orang lain?"},
+    {type:"chat", name:"Dinda", side:"left", text:"hmm"},
+    {type:"chat", name:"Andre", side:"right", text:"kalo sayang kenapa lu masih tlp sama orang lain? Ampe vc pula?"},
+    {type:"chat", name:"Dinda", side:"left", text:"maaf"},
+    {type:"chat", name:"Andre", side:"right", text:"lu cuma bisa minta maaf doang din, gak tau yang ku rasakan?"},
+    {type:"chat", name:"Andre", side:"right", text:"coba deh selesaikan masalah ini. kalo emang lu beneran sayang"},
+    {type:"chat", name:"Dinda", side:"left", text:"andre aku gak tau perasaan ku gimana. intinya aku minta maaf ya sayang.aku minta maaf. aku salah"},
+    {type:"chat", name:"Andre", side:"right", text:"kalo salah apa yang harus kau benerin?"},
+    {type:"chat", name:"Dinda", side:"left", text:"gak di ulangin lagi"},
+    {type:"chat", name:"Andre", side:"right", text:"bohong. buktiin dong kalo emang lu syaang, gak modal bacot doang"},
+    {type:"chat", name:"Dinda", side:"left", text:"maaf"},
+    {type:"narration", text:"mereka berdua pun, malah berantem dan waktu itu"},
+    {type:"chat", name:"Andre", side:"right", text:"apasih din cuma bisa nya minta maaf doang, gada guna nya din cuma ngabisin rasa berharap ku aja,lu sadar apa, kalo aku salah apa yang ku lakuin ke kamu?"},
+    {type:"chat", name:"Dinda", side:"left", text:"emamg lu ngapain aku?"},
+    {type:"chat", name:"Dinda", side:"left", text:"kek nya lu gak ngapa ngapain dah cuma diem aja "},
+    {type:"chat", name:"Andre", side:"right", text:"hmmm,"},
+    {type:"chat", name:"Dinda", side:"left", text:"oke deh aku salah, tapi lu tau ga alesan aku bisa nyaman sama orang lain?"},
+    {type:"chat", name:"Andre", side:"right", text:"apa?"},
+    {type:"chat", name:"Dinda", side:"left", text:"ya karena lu gak bisa ngasih yang terbaik buat aku, dia bisa ngasih apa apa, sedang kan kamu? gak bisa.buat apa kita pacaran kalo lu nya belum serius?"},
+    {type:"narration", text:"andre terdiam.sejenak "},
+    {type:"chat", name:"Andre", side:"right", text:"maaf din, tapi kenapa kamu gak bilang sama aku, kalo kamu ada masalah? kenapa cuma diem?"},
+    {type:"chat", name:"Dinda", side:"left", text:"karena jawaban kamu tidak membikin ku tenang, yang kamu ucapin selalu oke,oke dan oke, aku bosen dre. yaudah aku cari yang lebih baik dari kamu "},
+    {type:"chat", name:"Andre", side:"right", text:"harus banget ya,lu cari yang lain?"},
+    {type:"chat", name:"Andre", side:"right", text:"lu mau aku gada ya di hidup kamu? mau kita pisah, iya?"},
+    {type:"chat", name:"Dinda", side:"left", text:"ga gitu"},
+    {type:"chat", name:"Andre", side:"right", text:"lu mau aku pergi?"},
+    {type:"chat", name:"Andre", side:"right", text:"oke deh gw mundur, maaf kalo aku belum terbaikbuat kami ,maaf juga selama ini membuat mu kesal,maaf juga juga kalo omongan ku bikin sakit hati kamu, aku emang cowo jahat, aku beban,gak bisa apa apa, aku cuma badut yang sering kamu liat di setiao vc, oke deh aku minta maap semua apa yang terjadi, kemarin sekarang. semua nya sudah berakhir, aku cape din aku sudah tidak di proritasin kamu lebih memilih jalan mu, aku bakal pergi din, hati ku sakit "},
+    {type:"chat", name:"Dinda", side:"left", text:"jangan pergi dong pliss, aku mohon ini cuma masalah sepele"},
+    {type:"chat", name:"Andre", side:"right", text:"sepele katamu?"},
+    {type:"chat", name:"Andre", side:"right", text:"lu sama orang lain, itu sepele? heh din lu gak tau perasaan ku waktu lu 2in din, hati ku mo ku kasih di mana din,okelah lu cuma tlp gak ampe segitu nya, tapi lu vc lho, oke deh aku salah , tapi lu juga harus mikir hati gw, sesakit apa din, sadar lah din"},
+    {type:"chat", name:"Dinda", side:"left", text:"aku minta maaf,tapi itu semua bukan kemauan ku tetapi aku sering di kecewain sama kamu dre"},
+    {type:"chat", name:"Andre", side:"right", text:"okeh maaf,kalo aku sering mgecewain kamu, tapi kamu gak akan tau rasa sakit yang di bikin kecewa sama kamu, aku gak tau mana yang besar kecewa nya,aku dah gak tau jalan keluar din, rasanya aku pingin mati,dah gada yang dukung diri ku ini din "},
+    {type:"chat", name:"Andre", side:"right", text:"aku udah bukan siapa siapa mu din, aku dah gak penting di hidup mu din "},
+    {type:"chat", name:"Dinda", side:"left", text:"kamu penting dre bagi aku, nang pergi dong, jangan tinggalin aku domg"},
+    {type:"chat", name:"Andre", side:"right", text:"katamu penting? lu aja rela sama oramg, waktu sama aku lu udah gak ngasih waktu, terus katamu aku penting gitu? kau kira hidup ku bisa di mainin apa?gak bisa kan,aku dah gak penting di hidup mu din, kalo aku masih bertahan sama kamu hati ku gimana dong, sakit lho, sakit banget, lu gak tau rasanya kan, okelah kecewa mu cuma sebentar lah aku cuma berhari hari,aku berharap sama kamu apa? rasa sakit? cinta? lu aja gituin aku, okeh aku cowo dan aku harus kuat, tapi kalo soal beginian aku gak bisa din, aku nyerah ,cintaku juga yang pertama di hidup ku, aku baru pertama kali merasa di cintai lho din belum banyak pengalaman,lu taunya semua bakal baik baik saja, tapi lu juga pwrlahan myakitin diri ku din "},
+    {type:"narration", text:"dinda mencoba menahan air mata nya"},
+    {type:"chat", name:"Dinda", side:"left", text:"hmmm, dre aku minta maaf, tapi ini demi isi hati ku dre, aku bosen aja sama  kamu, kamu selalu gitu ,kamu kek musuhin aku dre, padahal aku juga gak mau sama orang lain, tapi kamu nya yang aku begitu ,aku emang gak tau pwrasaan mu tapi aku minta maaf ya andre, kamu jangan pergi dong, kamu mau aku sama orang lain ya andre, jangan gitu dong, mwnding kita temenan aja gimana?"},
+    {type:"chat", name:"Andre", side:"right", text:"hmm, teman ? katamu teman dan lu bosen.sama aku? "},
+    {type:"chat", name:"Dinda", side:"left", text:"iya teman, iya maaf waktu itu aku bosen sama kamu dan sekarang aku mau kamu jadi temen aku"},
+    {type:"chat", name:"Andre", side:"right", text:"terus hati ku taro mana? masa aku harus jadi temen mu, dah sakit lho hati ku,terus cuma kau anggap temen? terus hubungan 1,5 th gimama,sirna gitu aja? gak kam sakit lho hati ku ini, semua yang ku lakuin sia sia lho din, kamu mah enak gampang cari cowo, lah aku, gada yang mau, cape din hidup gw "},
+    {type:"chat", name:"Dinda", side:"left", text:"hmm, terus kamu bakal pergi?"},
+    {type:"chat", name:"Andre", side:"right", text:" iyalah, ini semua demi perasaan ku"},
+    {type:"chat", name:"Dinda", side:"left", text:"maaf ya andte"},
+    {type:"narration", text:"kebenaran yang akan tetjadi"},
+    {type:"chat", name:"Dinda", side:"left", text:"aku jahat ya, aku minta maaf ya andre aku dah gak tau harus apa, harus ninggalin dia atau kau, kalo aku ninggalin kamu, tapi aku gak mau kehilangan kamu, aku minta maaf"},
+    {type:"chat", name:"Andre", side:"right", text:"lu gak tau aja din swmua yang ku alami sekarang,banyak banget masalah"},
+    {type:"chat", name:"Dinda", side:"left", text:"emang masalah apa?"},
+    {type:"chat", name:"Andre", side:"right", text:"emang kamu harus tau?"},
+    {type:"chat", name:"Dinda", side:"left", text:"ya dong andre, emang masalah apa?"},
+    {type:"chat", name:"Andre", side:"right", text:"harus banget ya, kamu tau?"},
+    {type:"chat", name:"Dinda", side:"left", text:"iya dong, kamu belum pernah cerita masalah kamu lho, sini ku denger apa "},
+    {type:"chat", name:"Andre", side:"right", text:"hmmm, tapi jan nangis ya?"},
+    {type:"chat", name:"Dinda", side:"left", text:"gak lah "},
+    {type:"chat", name:"Andre", side:"right", text:"okedeh, sebelum aku pergi aku akan ngasih pesan penting ke kamu "},
+    {type:"chat", name:"Dinda", side:"left", text:"eh kok pergi sih, jangan dong aku mohon"},
+    {type:"chat", name:"Andre", side:"right", text:"udah lah din aku cape,"},
+    {type:"narration", text:"apa itu masalah nya?"},
+    {type:"chat", name:"Andre", side:"right", text:"hmm, sepertinya kamu emang harus tau "},
+    {type:"chat", name:"Andre", side:"right", text:"oke deh, masalah ku, aku dah gak penting buat siapapun din aku sudah nyerah din aku dah gak kuat harus ngaoain lagi, mimpi ku selalu sirna din, aku sering sakit, sakit jantung, pegel, mata ku kek panas ,pusing dada ku kek sesek gitu, kayak asma, dan aku banyak kecelakaam din pertama aku oernah di tabrak motor, dan waktu itu aku juga hapir mati gara gara di tabrak m pickep, terus sekarang kamu giniin aku, keluarga ku juga dah gak peduli sama aku, sekarang aku sendirian din, aku lelah din, aku rela gak makan demi kamu, tapi kamu nya malah gini, sakit bener hati ku ini din, cara mya biar hati ku bosa tenamg yaitu, ngilangin kamu dari pikiran ku, aku dah cape ama hidup ini, aku pernah di waktu waktu aku terpuruk dan aku menahan rasa sakit gara gara ngeliat kamu sama oramg lain din, dan aku hampir bundir agar di tabrak truk tetapi waktu itu aku sadar kalo yang ku lakuin itu salah, di pikiran ku, buat apa bundir kalo aku masih gini gini aja, dan di situlah aku sadar bahwa diri ku bukam hal yang tetbaik buat kamu , aku selalu cemburu tetapi alesan kamj banayk, aku dah gak bisa apa apa lagi din, dan sekarang aku mau pergi, buat nenangin diri ku ini din, aku juga kecewa sama diri oni yang gak bisa apa apa, tapi juga aku harus berusaha jadi lebih baik buat istri ku nanti, aku sekarang sadar aku harus berubah din, gak tergantung lagi sama orang lain, aku dah sadar jika allah menolongku, agar aku di kaaih kesemoatan untuk tidak menuju jalan yang salah, paling kita di pisahin karena allah peduli sama aku, aku selalu curhat sama allah, di doa ku aku cuma ingin hilangim masalah ku, ternyata masalah sebenat nya kamu, bukan siapapun , ternyata yang ku benci itu yang membuat ku terselamat kan dan aku sadar yang ku benci pasti bakal jadi milik ku aku gak tau apakah itu bener, aki gak mau kamu, juga salah jalan?, kita pacaran begimi juga nambah dosa ortu kita, aku dah sadar din aku mau menyudahi semua ini, aku dah cape mencintai yang tidak mencintai diri sendiri, semua itu cuma ujian din, kita bwgitu itu juga ujian tujuan ku sekarang adalah merubah hidup ku agar jauh lebih baik din, semoga kamu sama dia bisa bahagia ya, kwtawa bareng, main game bareng, dan hidup bareng jika aku liat kamu bahagia aku juga bahagia din. semua itu cuma sebatas cara allah menguji iman kita, akubtau kenapa aku di kasih sakit hati yang berlebih, ya karena itu tidak baik buat kita, semoga aku kuat ya untuk melupakan mu, aku dah gada temen lagi din dan semua nya hancur, kamu hanya bisa minta maaf, tetapi aku gak bisa bwgitu, harus pake fakta jika mau minta maaf haru pakai gimana kamu memperlakukan ku din, aku juga minta maaf ya gak bisa jadi apa yang kamu inginin, aku sudah cape din semua nya itu hilang tanpa kesaksian yang jelas . aku dah troma din apa yang sebenar nya ini terjadi ini, dan aku dah gak mau pacaran karena pacaran itu cuma harapan yang kosong, kita emang gak di takdirkan untuk bersama tetapi kita cuma di takdirkan untuk mengenang masalalu, aku yakin kamj bakal mikirin aku setiap hari ,tetapi kamu gak bisa memiliki ku tetapi jika kamu bisa memiliki ku, berarti kamu hebat din, seseoarang yang udah di rubah hidupnya sama kamu dan jauh lebih baik dari sebelum nya, aku yakin semia akan baik baik saja jika aku melupakan mu, aku sudah tidal lagi butuh seseorang di sampingku lagi din tetapi aku cuma butuh ketenangan di hidup ku ini, gpp deh aku miskin, tetapi jika aku tenang dan bahagia pasti hidup mj bakal baik baik saja, aku dah lupa din cara mencintai sekarang paling sesworang cuma jadi bahan gabut ku dan gak akan ku masukin ke hati, aku lelah din, semua imi cuma halusinasi manusia, jika yang kita ingin kan itu kebahagiaan, kita bakal di uji dengan kepahitan, terimamasih ya,din udah ngasih aku waktu , semua tentamg kita bakal jadi masala lalu , terimakaaih ya din, jaga diri mu baik baik ya , aku bakal tetap sayang sama kamu, dan semoga kau bahagia dengan piliham mu, i ilove you, aku pergi dulu ya sayang"},
+    {type:"narration", text:"andre pum pergi meninggal kan dinda dan melupakan semua tentang diri nya"},
+    {type:"chat", name:"Dinda", side:"left", text:"andre aku minta maaf ya."},
+    {type:"chat", name:"Dinda", side:"left", text:"andre"},
+    {type:"chat", name:"Dinda", side:"left", text:"andre,jangan tinggalin aku dong aku mohon"},
+    {type:"narration", text:"dinda pun merasa bersalah sama andre. namu sudah terlambat"},
+    {type:"chat", name:"Dinda", side:"left", text:"andre, maaf"},
+    {type:"narration", text:"6 th kemudian, mwreka bertuma dia suatu acara yang aangat besar dan andre melihat dinda dan menyapa nya"},
+    {type:"chat", name:"Andre", side:"right", text:"hai dinda"},
+    {type:"narration", text:"dinda pun sudah tidak mengenal andre karena perubahan andre yang mengubah fisik nya"},
+    {type:"chat", name:"Dinda", side:"left", text:"kamu siapa ya?"},
+    {type:"chat", name:"Andre", side:"right", text:"masa kamu gak kenal aku si, coba di ingat ingat"},
+    {type:"chat", name:"Dinda", side:"left", text:"siapa?"},
+    {type:"chat", name:"Andre", side:"right", text:"aku andrw, gimana kabar mu?"},
+    {type:"chat", name:"Dinda", side:"left", text:"andre siapa?"},
+    {type:"chat", name:"Andre", side:"right", text:"andre mantan cowo mu dulu "},
+    {type:"narration", text:"dinda pun mencoba berpikir dan dia mwngingat sesuatu lalu terharu dan memeluk andre"},
+    {type:"chat", name:"Andre", side:"right", text:"kamu kenapa din, kok tiba tiba peluk aku?"},
+    {type:"chat", name:"Dinda", side:"left", text:"aku kangen kamu "},
+    {type:"chat", name:"Andre", side:"right", text:"btw sudah ya pelukan nya, nanti istri ku cemburu "},
+    {type:"chat", name:"Dinda", side:"left", text:"hmm, okedeh "},
+    {type:"chat", name:"Andre", side:"right", text:"btw gimana kabur mu?,"},
+    {type:"chat", name:"Dinda", side:"left", text:"gak baik baik saja dre, gada yang kek kamu ternyata,jahat"},
+    {type:"chat", name:"Andre", side:"right", text:"owh begitu"},
+    {type:"chat", name:"istri andre", side:"right", text:"sayang itu siapa?"},
+    {type:"chat", name:"Andre", side:"right", text:"bukam siapa siapa, cuma oramg asing "},
+    {type:"chat", name:"istri andre", side:"right", text:"oww, okedeh"},
+    {type:"chat", name:"Andre", side:"right", text:"ydh bye ya din"},
+    {type:"chat", name:"Dinda", side:"left", text:"iya,bye"},
+    {type:"narration", text:"dinda pun nyesel karena.dulu membikin andre kecewa."},
+    {type:"narration", text:"okey, apa pelajaran yang di dapet dari cerita twrsebut, bahwa hidup ini cuma sebatas waktu yang selalu di habiskan untuk berpacaran dan tidak ada guna nya, dan lebih baik berubah dari pada berharapa sama orang yang tida mengharapin kita sekian dari aku andre, mengucapkan terimakasih , yang sudah membaca dan aku minta maaf kalo ada salah ketik"}
+];
+
+let index = 0;
+let waiting = false;
+let musicStarted = false;
+let otomatisBawah = true;
+
+const chat = document.getElementById("chat");
+const tap = document.getElementById("tap");
+const bgm = document.getElementById("bgm");
+
+chat.addEventListener("scroll", ()=>{
+  const sisa = chat.scrollHeight - chat.scrollTop - chat.clientHeight;
+  otomatisBawah = sisa < 50;
+});
+
+function autoScroll(){
+  if(otomatisBawah) chat.scrollTop = chat.scrollHeight;
+}
+
+function vibrateFX(type){
+  if(!navigator.vibrate) return;
+  if(type==="start") navigator.vibrate([30,40,30]);
+  if(type==="mid") navigator.vibrate(20);
+  if(type==="end") navigator.vibrate([60,50,60]);
+}
+
+function startMusic(){
+  if(!musicStarted){
+    bgm.volume=0.5;
+    bgm.play().catch(()=>{});
+    musicStarted=true;
+  }
+}
+
+function typeText(el,text,cb){
+  let i=0;
+  el.classList.add("cursor");
+  vibrateFX("start");
+  let interval=setInterval(()=>{
+    el.textContent=text.substring(0,i);
+    autoScroll();
+    i++;
+    if(i%2===0) vibrateFX("mid");
+    if(i>text.length){
+      clearInterval(interval);
+      el.classList.remove("cursor");
+      vibrateFX("end");
+      otomatisBawah=true;
+      cb();
+    }
+  },30);
+}
+
+function run(){
+  if(index>=data.length) return;
+  waiting=true;
+  const item=data[index];
+  if(item.type==="narration"){
+    const n=document.createElement("div");
+    n.className="narration";
+    n.textContent=item.text;
+    chat.appendChild(n);
+    autoScroll();
+    vibrateFX("start");
+    index++; waiting=false; return;
+  }
+  const msg=document.createElement("div");
+  msg.className="msg "+item.side;
+  msg.innerHTML=`<div class="name">${item.name}</div><div class="bubble"></div>`;
+  chat.appendChild(msg); autoScroll();
+  const bubble=msg.querySelector(".bubble");
+  typeText(bubble,item.text,()=>{waiting=false;});
+  index++;
+}
+
+tap.addEventListener("click",()=>{
+  startMusic();
+  if(waiting) return;
+  run();
+});
+
+run();
+</script>
+</body>
+</html>
